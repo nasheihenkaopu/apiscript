@@ -3,8 +3,6 @@
 date_default_timezone_set('Asia/Shanghai');
 header("Content-Type: text/html;charset=utf-8");
 
-echo date('H');exit;
-
 //PhpScript 目录
 defined('ROOT_PATH') or define('ROOT_PATH',__DIR__. DIRECTORY_SEPARATOR);
 

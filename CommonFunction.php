@@ -63,10 +63,11 @@ function redis($fun,$par, $par2 = false,$par3 = false){
     $redis = new Redis();
     $redis->connect(
         conf('redis.host'),
-        conf('redis.port'),
-        conf('redis.password')
+        conf('redis.port')
     );
-    $redis->auth(conf('redis.password')); 
+    if($pwd = conf('redis.password')){
+        $redis->auth(conf('redis.password'));
+    }
     if($par3){
         $res = $redis->$fun($par, $par2,$par3);
     }else if($par2){
