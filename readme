@@ -1,0 +1,9 @@
+自用脚本小工具
+
+目录介绍
+    logs                //日志文件
+    script              //放脚本文件的地方,脚本文件后缀Script
+    CommonFunction.php  //公共方法,在脚本文件中可以调用
+    conf.php            //配置文件
+    index.php           //入口文件
+    .env                //配置文件,这个默认没有,得自己建
