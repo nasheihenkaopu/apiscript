@@ -204,6 +204,9 @@ class MessageScript extends BaseScript
         if(strpos($page,'{post_id}')){
             $page = strtr($page,['{post_id}'=>$this->data->vod_id]);
         }
+        if(strpos($page,'{post_class}')){
+            $page = strtr($page,['{post_class}'=>$this->data->post_class]);
+        }
         return $page;
     }
 

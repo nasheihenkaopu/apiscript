@@ -39,7 +39,7 @@ return array(
             //首页
             1=>'pages/index/index',
             //帖子详情页
-            2=> 'pages/index/index?post_id={post_id}',
+            2=> 'pages/index/index?post_id={post_id}&post_class={post_class}',
             //消息列表页
             3=> 'pages/index/index?pcode=message',
         ]
