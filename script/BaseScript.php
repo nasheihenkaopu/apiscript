@@ -41,6 +41,7 @@ class BaseScript{
             }
         }else{
             logs('缺少参数apptoken->'.$app_token.'message->'.$message);
+            return false;
         }
     }
 }
