@@ -25,8 +25,8 @@ class MessageScript extends BaseScript
         }
 
         $func = self::M[$this->data->type];
-        if(!$this->$func()){
-            logs('错误');
+        if($this->$func() === false){
+            logs('信息处理错误');
             logs($this->data);
             return false;
         }
@@ -73,6 +73,7 @@ class MessageScript extends BaseScript
         $sql = "select openid,form_id FROM vod_form_id WHERE uid = {$this->data->uid} and uid != 0 ORDER BY expire_time ASC LIMIT 1";
         $form_id_res = mysqlExe($sql);
         if (!$form_id_res) {
+            logs('没有查询到openid');
             return false;
         }
         $this->message['data'] = [
@@ -191,6 +192,18 @@ class MessageScript extends BaseScript
         } else {
             return true;
         }
+    }
+
+    /**
+     * 页面处理
+     */
+
+    public function pageFormat($page_type){
+        $page = conf('wx.page')[$page_type];
+        if(strpos($page,'{post_id}')){
+            $page = strtr($page,['{post_id}'=>$this->data->vod_id]);
+        }
+        return $page;
     }
 
     /**
