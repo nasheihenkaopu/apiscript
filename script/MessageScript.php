@@ -81,7 +81,7 @@ class MessageScript extends BaseScript
             'keyword1' => ['value' => $push_auto_res[0]['title']],
             'keyword2' => ['value' => $push_auto_res[0]['body']]
         ];
-        $this->message['page'] = conf('wx.page')[$push_auto_res[0]['page']];
+        $this->message['page'] = $this->pageFormat($push_auto_res[0]['page']);
         $this->message['touser'] = $form_id_res[0]['openid'];
         $this->message['template_id'] = conf('wx.template_id');
         $this->message['form_id'] = $form_id_res[0]['form_id'];
@@ -122,7 +122,7 @@ class MessageScript extends BaseScript
             'keyword1' => ['value' => $push_auto_res[0]['title']],
             'keyword2' => ['value' => $reply_user[0]['name'] . '评论了你:' . mb_substr($this->data->content, 0, 50)]
         ];
-        $this->message['page'] = conf('wx.page')[$push_auto_res[0]['page']];
+        $this->message['page'] = $this->pageFormat($push_auto_res[0]['page']);
         $this->message['touser'] = $form_id_res[0]['openid'];
         $this->message['template_id'] = conf('wx.template_id');
         $this->message['form_id'] = $form_id_res[0]['form_id'];
@@ -162,7 +162,7 @@ class MessageScript extends BaseScript
             'keyword1' => ['value' => $push_auto_res[0]['title']],
             'keyword2' => ['value' => $comment_user[0]['name'] . '回复了你:' . mb_substr($this->data->content, 0, 50)]
         ];
-        $this->message['page'] = conf('wx.page')[$push_auto_res[0]['page']];
+        $this->message['page'] = $this->pageFormat($push_auto_res[0]['page']);
         $this->message['touser'] = $form_id_res[0]['openid'];
         $this->message['template_id'] = conf('wx.template_id');
         $this->message['form_id'] = $form_id_res[0]['form_id'];
