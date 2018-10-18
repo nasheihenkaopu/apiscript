@@ -133,7 +133,7 @@ class MessageScript extends BaseScript
     public function replyMessage()
     {
         //查询配置的标题,内容,页面
-        $sql = "select title,body,page from vod_wx_push_auto where type = {$this->data->type} and status = 1 and number = {$this->data->number} limit 1";
+        $sql = "select title,body,page from vod_wx_push_auto where type = 2 and status = 1 and number = {$this->data->number} limit 1";
         $push_auto_res = mysqlExe($sql);
         if (!$push_auto_res) {
             logs('没有配置');
