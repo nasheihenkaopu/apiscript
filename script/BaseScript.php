@@ -12,7 +12,7 @@ class BaseScript{
     {
         //如果请求过,且不到两个小时则不再请求token
         if(env('app_token') && env('app_token_time')){
-            if(time() - env('app_token_time') < 7200 - 300){
+            if(time() - env('app_token_time') < 6000){
                 return;
             }
         }

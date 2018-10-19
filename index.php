@@ -64,11 +64,12 @@ if (!isset($argv[1])) {
 //公共方法
 require 'CommonFunction.php';
 
-while(true){
 
+$run_number = 1;
+while(true){
     //规定时间运行 ,格式 '起始时间-结束时间' 单位:时,每10分钟判断一次,不设置时间,则一直运行
-    if (isset($argv[2])) {
-        $run_time = explode('-', $argv[2]);
+    if (isset($argv[3])) {
+        $run_time = explode('-', $argv[3]);
         $hours = date('H');
         if (!($run_time[0] <= $hours && $run_time[1] >= $hours)) {
             sleep(60*10);
@@ -76,7 +77,18 @@ while(true){
         }
     }
 
+    //运行次数
+    if (isset($argv[2])) {
+        if($argv[2] == true){
+
+        }else if ($run_number > $argv[2]) {
+            break;
+        }
+    }
+
     new $class();
     usleep(500000);
+
+    $run_number++;
 }
     
