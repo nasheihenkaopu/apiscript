@@ -79,7 +79,9 @@ while(true){
 
     //运行次数
     if (isset($argv[2])) {
-        if ($run_number > $argv[2]) {
+        if('true' === $argv[2]){
+
+        }else if($run_number > $argv[2]) {
             break;
         }
     }
