@@ -79,15 +79,13 @@ while(true){
 
     //运行次数
     if (isset($argv[2])) {
-        if($argv[2] == true){
-
-        }else if ($run_number > $argv[2]) {
+        if ($run_number > $argv[2]) {
             break;
         }
     }
 
     new $class();
-    usleep(500000);
+    usleep(200000);
 
     $run_number++;
 }

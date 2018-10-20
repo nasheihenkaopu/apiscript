@@ -14,9 +14,6 @@ class MessageScript extends BaseScript
 
     public function __construct()
     {
-        //此脚本运行时间
-        $this->runTime();
-
         parent::__construct();
         //获取任务
         $this->data = json_decode(redis('rpop', 'tapai:wechat:message:queue'));
@@ -210,12 +207,12 @@ class MessageScript extends BaseScript
         return $page;
     }
 
-    /**
-     * 脚本运行时间,22点-7点
-     */
-    public function runTime(){
-        if(date('H') == 22){
-            sleep(60*60*9);
-        }
-    }
+    // /**
+    //  * 脚本运行时间,22点-7点
+    //  */
+    // public function runTime(){
+    //     if(date('H') == 22){
+    //         sleep(60*60*9);
+    //     }
+    // }
 }
