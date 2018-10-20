@@ -40,6 +40,9 @@ class BaseScript{
                 logs('发送失败');
                 logs($message);
                 logs($res);
+                logs('token->' . $app_token);
+                logs('token请求时间->' . env('wx_app_token_time'));
+                logs('token有效时间->' . env('wx_app_token_expires'));
                 return false;
             }
         }else{
