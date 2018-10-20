@@ -71,7 +71,7 @@ while(true){
     if (isset($argv[3])) {
         $run_time = explode('-', $argv[3]);
         $hours = date('H');
-        if (!($run_time[0] <= $hours && $run_time[1] >= $hours)) {
+        if (!($run_time[0] <= $hours && $run_time[1] > $hours)) {
             sleep(60*10);
             continue;
         }
