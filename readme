@@ -7,3 +7,6 @@
     conf.php            //配置文件
     index.php           //入口文件
     .env                //配置文件,这个默认没有,得自己建
+
+运行命令
+    PHP index.php 脚本名  运行次数  运行时间
