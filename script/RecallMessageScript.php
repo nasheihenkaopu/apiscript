@@ -41,7 +41,6 @@ class RecallMessageScript extends BaseScript{
                     if($day == $recall_conf['day']){
                         logs('发送通知');
                         $send_status = $this->sendMessage(
-                            env('app_token'),
                             json_encode([
                                 'data'=>[
                                     'keyword1' => ['value' => $recall_conf['title']],

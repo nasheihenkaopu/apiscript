@@ -32,7 +32,7 @@ class MessageScript extends BaseScript
         if ($this->checkSendMessage()) {
             //检查发送参数
             if ($this->message) {
-                $send_status = $this->sendMessage(env('app_token'), json_encode($this->message));
+                $send_status = $this->sendMessage(json_encode($this->message));
                  //发送成功,删除form_id,并把openid设置到redis
                 if ($send_status ===  true) {
                     $sql = "delete from vod_form_id where form_id = '{$this->message['form_id']}'";
