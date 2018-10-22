@@ -64,7 +64,6 @@ if (!isset($argv[1])) {
 //公共方法
 require 'CommonFunction.php';
 
-
 $run_number = 1;
 while(true){
     //规定时间运行 ,格式 '起始时间-结束时间' 单位:时,每10分钟判断一次,不设置时间,则一直运行

@@ -5,7 +5,6 @@ class RecallMessageScript extends BaseScript{
 
     public function __construct()
     {
-        parent::__construct();
         $this->getSendOpenids();
     }
 

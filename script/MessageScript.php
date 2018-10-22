@@ -14,7 +14,6 @@ class MessageScript extends BaseScript
 
     public function __construct()
     {
-        parent::__construct();
         //获取任务
         $this->data = json_decode(redis('rpop', 'tapai:wechat:message:queue'));
         if (!$this->data) {
@@ -55,14 +54,6 @@ class MessageScript extends BaseScript
      */
     public function likeMessage()
     {
-        //查询配置的标题,内容,页面
-        $sql = "select title,body,page from vod_wx_push_auto where type = {$this->data->type} and status = 1 and number = {$this->data->number} limit 1";
-        $push_auto_res = mysqlExe($sql);
-        if (!$push_auto_res) {
-            logs('没有配置');
-            return false;
-        }
-
         //先删除过期的form_id
         $sql = 'delete from vod_form_id where expire_time < ' . time();
         mysqlExe($sql);
@@ -74,6 +65,15 @@ class MessageScript extends BaseScript
             logs('没有查询到openid');
             return false;
         }
+
+        //查询配置的标题,内容,页面
+        $sql = "select title,body,page from vod_wx_push_auto where type = {$this->data->type} and status = 1 and number = {$this->data->number} limit 1";
+        $push_auto_res = mysqlExe($sql);
+        if (!$push_auto_res) {
+            logs('没有配置');
+            return false;
+        }
+
         $this->message['data'] = [
             'keyword1' => ['value' => $push_auto_res[0]['title']],
             'keyword2' => ['value' => $push_auto_res[0]['body']]
@@ -89,6 +89,26 @@ class MessageScript extends BaseScript
      */
     public function commentMessage()
     {
+         //先删除过期的form_id
+        $sql = 'delete from vod_form_id where expire_time < ' . time();
+        mysqlExe($sql);
+
+        //查询接收者openid,form_id
+        $sql = "select openid,form_id FROM vod_form_id WHERE uid = {$this->data->uid} and uid != 0 ORDER BY expire_time ASC LIMIT 1";
+        $form_id_res = mysqlExe($sql);
+        if (!$form_id_res) {
+            logs('没有查询到openid');
+            return false;
+        }
+
+        //查询评论者名称
+        $sql = "select name from vod_user where uid = {$this->data->from_uid}";
+        $reply_user = mysqlExe($sql);
+        if (!$reply_user) {
+            logs('没这个评论者->' . $this->data->from_uid);
+            return false;
+        }
+
         //查询配置的标题,内容,页面
         $sql = "select title,body,page from vod_wx_push_auto where type = {$this->data->type} and status = 1 and number = {$this->data->number} limit 1";
         $push_auto_res = mysqlExe($sql);
@@ -97,24 +117,6 @@ class MessageScript extends BaseScript
             return false;
         }
 
-        //查询评论者名称
-        $sql = "select name from vod_user where uid = {$this->data->from_uid}";
-        $reply_user = mysqlExe($sql);
-        if (!$reply_user) {
-            logs('没这个用户->' . $this->data->from_uid);
-            return false;
-        }
-
-        //先删除过期的form_id
-        $sql = 'delete from vod_form_id where expire_time < ' . time();
-        mysqlExe($sql);
-
-        //查询接收者openid,form_id
-        $sql = "select openid,form_id FROM vod_form_id WHERE uid = {$this->data->uid} and uid != 0 ORDER BY expire_time ASC LIMIT 1";
-        $form_id_res = mysqlExe($sql);
-        if (!$form_id_res) {
-            return false;
-        }
         $this->message['data'] = [
             'keyword1' => ['value' => $push_auto_res[0]['title']],
             'keyword2' => ['value' => $reply_user[0]['name'] . '评论了你:' . mb_substr($this->data->content, 0, 50)]
@@ -130,21 +132,6 @@ class MessageScript extends BaseScript
      */
     public function replyMessage()
     {
-        //查询配置的标题,内容,页面
-        $sql = "select title,body,page from vod_wx_push_auto where type = 2 and status = 1 and number = {$this->data->number} limit 1";
-        $push_auto_res = mysqlExe($sql);
-        if (!$push_auto_res) {
-            logs('没有配置');
-            return false;
-        }
-
-        //查询回复者id
-        $sql = "select name from vod_user where uid = {$this->data->from_uid}";
-        $comment_user = mysqlExe($sql);
-        if (!$comment_user) {
-            return false;
-        }
-
         //先删除过期的form_id
         $sql = 'delete from vod_form_id where expire_time < ' . time();
         mysqlExe($sql);
@@ -153,8 +140,26 @@ class MessageScript extends BaseScript
         $sql = "select openid,form_id FROM vod_form_id WHERE uid = {$this->data->uid} and uid != 0 ORDER BY expire_time ASC LIMIT 1";
         $form_id_res = mysqlExe($sql);
         if (!$form_id_res) {
+            logs('没有查询到openid');
             return false;
         }
+
+        //查询回复者id
+        $sql = "select name from vod_user where uid = {$this->data->from_uid}";
+        $comment_user = mysqlExe($sql);
+        if (!$comment_user) {
+            logs('没有这个回复者->'. $this->data->from_uid);
+            return false;
+        }
+
+        //查询配置的标题,内容,页面
+        $sql = "select title,body,page from vod_wx_push_auto where type = 2 and status = 1 and number = {$this->data->number} limit 1";
+        $push_auto_res = mysqlExe($sql);
+        if (!$push_auto_res) {
+            logs('没有配置');
+            return false;
+        }
+
         $this->message['data'] = [
             'keyword1' => ['value' => $push_auto_res[0]['title']],
             'keyword2' => ['value' => $comment_user[0]['name'] . '回复了你:' . mb_substr($this->data->content, 0, 50)]

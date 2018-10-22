@@ -1,33 +1,31 @@
 <?php
 class BaseScript{
-    public function __construct()
-    {
-        $this->getWxToken();
-    }
 
     /**
      * 获取微信小程序token
      */
     public function getWxToken()
     {
-        //如果请求过,且不到两个小时则不再请求token
-        if(env('wx_app_token') && env('wx_app_token_time')){
-            if(time() - env('wx_app_token_time') < env('wx_app_token_expires') - 600){
-                return;
-            }
+        //access_token在redis的key
+        $token_key = 'tapai:mini:access.token';
+
+        $app_access_token = redis('get', $token_key);
+        if($app_access_token){
+            return $app_access_token;
+        }else{
+            $get_token_api = strtr(conf('wx.get_token_api'), ['{MY_APPID}' => conf('wx.app_id'), '{MY_APPSECRET}' => conf('wx.secret')]);
+            $res = json_decode(curl($get_token_api));
+            redis('set', $token_key,$res->access_token);
+            redis('Expire',$token_key,6000);
+            return $res->access_token; 
         }
-        $get_token_api = strtr(conf('wx.get_token_api'), ['{MY_APPID}' => conf('wx.app_id'), '{MY_APPSECRET}' => conf('wx.secret')]);
-        $res = json_decode(curl($get_token_api));
-        putenv('wx_app_token='.$res->access_token);    //token
-        putenv('wx_app_token_time='.time());           //这次请求的时间
-        putenv('wx_app_token_expires='.$res->expires_in);  //token有效期
     }
 
     /**
      * 发送微信模板消息
      */
     public function sendMessage($message){
-        $app_token = env('wx_app_token');
+        $app_token = $this->getWxToken();
 
         if($app_token && $message){
             $send_message_api = strtr(conf('wx.send_notice_api'), ['{MY_TOKEN}' =>$app_token]);
@@ -41,8 +39,6 @@ class BaseScript{
                 logs($message);
                 logs($res);
                 logs('token->' . $app_token);
-                logs('token请求时间->' . env('wx_app_token_time'));
-                logs('token有效时间->' . env('wx_app_token_expires'));
                 return false;
             }
         }else{
