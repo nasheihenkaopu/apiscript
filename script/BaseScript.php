@@ -70,7 +70,7 @@ class BaseScript{
                 //{"errcode":41028,"errmsg":"invalid form id hint: [p.ewjA05223932]"}
                 logs('发送失败,form_id出错');
                 logs($res);
-                $sql = 'delete from vod_form_id where form_id = '.$message['form_id'];
+                $sql = "delete from vod_form_id where form_id = '{$message['form_id']}'";
                 if(mysqlExe($sql)){
                     logs('删除form_id->'.$message['form_id'].'成功');
                 }else{
@@ -81,7 +81,7 @@ class BaseScript{
                 //{"errcode":40003,"errmsg":"invalid openid hint: [gCCsqa09373950]"}
                 logs('发送失败,openid出错');
                 logs($res);
-                $sql = 'delete from vod_form_id where openid = '.$message['touser'];
+                $sql = "delete from vod_form_id where openid = '{$message['touser']}'";
                 if (mysqlExe($sql)) {
                     logs('删除openid->' . $message['touser'] . '成功');
                 } else {
