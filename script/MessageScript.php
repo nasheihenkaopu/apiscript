@@ -31,13 +31,7 @@ class MessageScript extends BaseScript
         if ($this->checkSendMessage()) {
             //检查发送参数
             if ($this->message) {
-                $send_status = $this->sendMessage(json_encode($this->message));
-                 //发送成功,删除form_id,并把openid设置到redis
-                if ($send_status ===  true) {
-                    $sql = "delete from vod_form_id where form_id = '{$this->message['form_id']}'";
-                    mysqlExe($sql);
-                    $this->sendOpenid();
-                }
+                $send_status = $this->sendMessage($this->message);
             } else {
                 logs('缺少参数message');
                 logs($this->data);
@@ -82,6 +76,7 @@ class MessageScript extends BaseScript
         $this->message['touser'] = $form_id_res[0]['openid'];
         $this->message['template_id'] = conf('wx.template_id');
         $this->message['form_id'] = $form_id_res[0]['form_id'];
+        $this->message['emphasis_keyword'] = 'keyword1.DATA';
     }
 
     /**
@@ -125,6 +120,7 @@ class MessageScript extends BaseScript
         $this->message['touser'] = $form_id_res[0]['openid'];
         $this->message['template_id'] = conf('wx.template_id');
         $this->message['form_id'] = $form_id_res[0]['form_id'];
+        $this->message['emphasis_keyword'] = 'keyword1.DATA';
     }
 
     /**
@@ -168,21 +164,7 @@ class MessageScript extends BaseScript
         $this->message['touser'] = $form_id_res[0]['openid'];
         $this->message['template_id'] = conf('wx.template_id');
         $this->message['form_id'] = $form_id_res[0]['form_id'];
-    }
-
-    /**
-     * 发送openid到集合
-     */
-    public function sendOpenid()
-    {
-        $is = redis('EXISTS', 'tapai:wechat:message:openid');
-        if ($is) {
-            redis('sadd', 'tapai:wechat:message:openid', $this->message['touser']);
-        } else {
-            redis('sadd', 'tapai:wechat:message:openid', $this->message['touser']);
-            $time = strtotime(date('Y-m-d', strtotime('+1 day')));    //设置过期时间
-            redis('EXPIREAT', 'tapai:wechat:message:openid', $time);
-        }
+        $this->message['emphasis_keyword'] = 'keyword1.DATA';
     }
 
     /**

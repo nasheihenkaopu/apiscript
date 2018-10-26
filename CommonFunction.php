@@ -6,11 +6,8 @@
  */
 function logs($log){
     $log_file = ROOT_PATH.'logs'. DIRECTORY_SEPARATOR.date('Y-m-d').'.log';
-    if(is_array($log)){
-        $log = implode(',',$log);
-    }
-    if(is_object($log)){
-        $log = json_encode($log,JSON_FORCE_OBJECT);
+    if(is_array($log) || is_object($log)){
+        $log = json_encode($log);
     }
     $log = date('H:i:s').'-->'.$log. PHP_EOL;
     file_put_contents($log_file,$log, FILE_APPEND);
