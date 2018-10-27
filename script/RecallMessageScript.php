@@ -11,7 +11,7 @@ class RecallMessageScript extends BaseScript{
         $limit = 0;
         while(true){
             $this->getSendOpenids($limit);
-            $limit += 500;
+            $limit += 5000;
         }
     }
 
@@ -20,7 +20,7 @@ class RecallMessageScript extends BaseScript{
      */
     public function getSendOpenids($limit){
         //获取有效的form_id 
-        $sql = 'select openid,form_id from vod_form_id where expire_time > ' . time() . ' group by openid order by expire_time ASC '.'limit '.$limit.',500';
+        $sql = 'select openid,form_id from vod_form_id where expire_time > ' . time() . ' group by openid order by expire_time ASC '.'limit '.$limit.',5000';
         $users = mysqlExe($sql);
         logs('获取有效的form_id'.$sql);
         if(!$users){
