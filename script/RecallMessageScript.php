@@ -3,10 +3,12 @@ class RecallMessageScript extends BaseScript{
 
     public $openid_key = 'tapai.mini:view.record.';
 
+    public $statistical = 'tapai:wechat:message:statistical:recall.';
+
     public function __construct()
     {
         /**
-         * 发送召回消息,分批发送,每次500
+         * 发送召回消息,分批发送,每次5000
          */
         $limit = 0;
         while(true){
@@ -19,12 +21,15 @@ class RecallMessageScript extends BaseScript{
      * 获取需要发送消息的openid
      */
     public function getSendOpenids($limit){
+
         //获取有效的form_id 
         $sql = 'select openid,form_id from vod_form_id where expire_time > ' . time() . ' group by openid order by expire_time ASC '.'limit '.$limit.',5000';
         $users = mysqlExe($sql);
         logs('获取有效的form_id'.$sql);
         if(!$users){
             logs('没有需要发送的用户');
+            //统计发送次数
+            $this->total();
             exit;
         }
 
@@ -50,7 +55,8 @@ class RecallMessageScript extends BaseScript{
                 foreach($recall_confs as $recall_conf){
                     if($day == $recall_conf['day']){
                         logs('发送通知');
-                        $send_status = $this->sendMessage(
+                        $this->statistics($this->statistical.'count');
+                        $send_status = parent::sendMessage(
                             [
                                 'data'=>[
                                     'keyword1' => ['value' => $recall_conf['title']],
@@ -62,6 +68,11 @@ class RecallMessageScript extends BaseScript{
                                 'form_id'=>$user['form_id']
                             ]
                         );
+                        if($send_status === true){
+                            $this->statistics($this->statistical.'success');
+                        }else{
+                            $this->statistics($this->statistical.'error');
+                        }
                     }
                 }
             }
@@ -69,7 +80,7 @@ class RecallMessageScript extends BaseScript{
     }
 
     /**
-     * 格式化页面
+     * 格式化跳转链接
      */
     public function pageFormat($page_type,$page_param){
         $page = conf('wx.page')[$page_type];
@@ -92,4 +103,27 @@ class RecallMessageScript extends BaseScript{
             return false;
         }
     }
+
+    /**
+     * @param $redis_key 每次调用,传入的key自增1
+     */
+    public function statistics($redis_key){
+        redis('INCR',$redis_key);
+    }
+
+    /**
+     * 统计数据生成log文件
+     */
+
+     public function total(){
+        $count = redis('get',$this->statistical.'count');
+        $succ = redis('get',$this->statistical.'success');
+        $err = redis('get',$this->statistical.'error');
+
+        redis('del',$this->statistical.'count');
+        redis('del',$this->statistical.'success');
+        redis('del',$this->statistical.'error');
+
+        logs('RecallMessageScript->发送总数:'.$count.'成功总数:'.$succ.'失败总数:'.$err);
+     }
 }

@@ -11,9 +11,21 @@ class MessageScript extends BaseScript
     public $data;
     //微信发送通知的参数
     public $message;
+    //统计key
+    public $statistical = 'tapai:wechat:message:statistical:message.';
 
     public function __construct()
     {
+        /**
+         * 每天21:58做一次统计,如果redis有值,说明还没统计过,如果统计过,会删除对应的key
+         */
+        if(date('H') == 21 && date('i') >= 28){
+            $count = redis('get',$this->statistical.'count');
+            if($count){
+                $this->total();
+            }
+            return;
+        }
         //获取任务
         $this->data = json_decode(redis('rpop', 'tapai:wechat:message:queue'));
         if (!$this->data) {
@@ -31,7 +43,13 @@ class MessageScript extends BaseScript
         if ($this->checkSendMessage()) {
             //检查发送参数
             if ($this->message) {
-                $send_status = $this->sendMessage($this->message);
+                parent::statistics($this->statistical.'count');
+                $send_status = parent::sendMessage($this->message);
+                if($send_status === true){
+                    parent::statistics($this->statistical.'success');
+                }else{
+                    parent::statistics($this->statistical.'error');
+                }
             } else {
                 logs('缺少参数message');
                 logs($this->data);
@@ -194,12 +212,15 @@ class MessageScript extends BaseScript
         return $page;
     }
 
-    // /**
-    //  * 脚本运行时间,22点-7点
-    //  */
-    // public function runTime(){
-    //     if(date('H') == 22){
-    //         sleep(60*60*9);
-    //     }
-    // }
+    public function total(){
+        $count = redis('get',$this->statistical.'count');
+        $succ = redis('get',$this->statistical.'success');
+        $err = redis('get',$this->statistical.'error');
+
+        redis('del',$this->statistical.'count');
+        redis('del',$this->statistical.'success');
+        redis('del',$this->statistical.'error');
+
+        logs('MessageScript->发送总数:'.$count.'成功总数:'.$succ.'失败总数:'.$err);
+    }
 }

@@ -25,7 +25,7 @@ class BaseScript{
      * 发送微信模板消息
      */
     public function sendMessage($message){
-        $app_token = $this->getWxToken();
+        $app_token = self::getWxToken();
 
         if($app_token && $message){
             $message_json = json_encode($message);
@@ -66,7 +66,7 @@ class BaseScript{
                     }
                 }
                 return false;
-            }else if($res->errcode == 41028){
+            }else if($res->errcode == 41028 || $res->errcode == 41029){
                 //{"errcode":41028,"errmsg":"invalid form id hint: [p.ewjA05223932]"}
                 logs('发送失败,form_id出错');
                 logs($res);
@@ -114,5 +114,12 @@ class BaseScript{
             $time = strtotime(date('Y-m-d', strtotime('+1 day')));    //设置过期时间
             redis('EXPIREAT', 'tapai:wechat:message:openid', $time);
         }
+    }
+
+    /**
+     * @param $redis_key 每次调用,传入的key自增1
+     */
+    public function statistics($redis_key){
+        redis('INCR',$redis_key);
     }
 }
