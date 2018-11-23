@@ -33,8 +33,6 @@ class BaseScript{
             //请求发送模板消息的api
             $res = json_decode(curl($send_message_api,'POST', $message_json));
             if($res->errcode == 0){
-                logs('发送成功');
-                logs($message);
                 //删除form_id
                 $sql = "delete from vod_form_id where form_id = '{$message['form_id']}'";
                 if (mysqlExe($sql)) {

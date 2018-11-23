@@ -25,7 +25,6 @@ class RecallMessageScript extends BaseScript{
         //获取有效的form_id 
         $sql = 'select openid,form_id from vod_form_id where expire_time > ' . time() . ' group by openid order by expire_time ASC '.'limit '.$limit.',5000';
         $users = mysqlExe($sql);
-        logs('获取有效的form_id'.$sql);
         if(!$users){
             logs('没有需要发送的用户');
             //统计发送次数
@@ -36,7 +35,6 @@ class RecallMessageScript extends BaseScript{
         //查询配置
         $sql = 'select day,title,body,page,page_param from vod_wx_recall_message';
         $recall_confs = mysqlExe($sql);
-        logs('查询配置'.$sql);
         
         //遍历所有可发送的用户
         foreach($users as $user){
@@ -46,15 +44,12 @@ class RecallMessageScript extends BaseScript{
             }
             //获取用户最后一次访问时间
             $last_time = redis('get',$this->openid_key . $user['openid']);
-            logs($user['openid'].'最后一次访问时间'.$last_time);
             if($last_time){
                 //几天没访问
                 $day = floor((time()-$last_time)/86400);
-                logs($user['openid'] .'用户'.$day.'天没有访问过');
                 //遍历配置,如果未访问的天数等于配置的天数,则发召回消息
                 foreach($recall_confs as $recall_conf){
                     if($day == $recall_conf['day']){
-                        logs('发送通知');
                         $this->statistics($this->statistical.'count');
                         $send_status = parent::sendMessage(
                             [

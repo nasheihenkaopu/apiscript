@@ -31,8 +31,6 @@ class MessageScript extends BaseScript
         if (!$this->data) {
             return false;
         }
-        logs('获取到任务');
-        logs($this->data);
         $func = self::M[$this->data->type];
         if($this->$func() === false){
             logs('信息处理错误');
