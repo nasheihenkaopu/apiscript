@@ -42,6 +42,11 @@ return array(
             2=> 'pages/index/index?post_id={post_id}&post_class={post_class}',
             //消息列表页
             3=> 'pages/index/index?pcode=message',
+            //任务中心
+            4=> 'pages/index/index?pcode=TaskCenter'
+        ],
+        'template'=>[
+            'sign' => env('WX_TEMPLATE_SIGN')
         ]
     ]
 );
