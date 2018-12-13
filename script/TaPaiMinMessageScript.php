@@ -11,7 +11,7 @@ class TaPaiMinMessageScript extends BaseScript{
             $data = json_decode(curl($this->user_list_api.$this->index,'GET'));
             if($data->Code != 0){
                 logs('请求接口出错-->'.$data->Msg);
-                exit;
+                break;
             }
             if($data->Data->notify_users){
                 foreach($data->Data->notify_users  as $user){
@@ -20,7 +20,7 @@ class TaPaiMinMessageScript extends BaseScript{
                     $user_mini = mysqlExe($sql);
                     if($user_mini){
                         $this->message['data'] = [
-                            'keyword1' => ['value' => "第{$user->sign_day}签到提醒"],
+                            'keyword1' => ['value' => "第{$user->sign_day}天签到提醒"],
                             'keyword2' => ['value' => "你有{$user->un_get_gold}金币待领取,别中断了哦"]
                         ];
                         $this->message['page'] = $this->pageFormat(4);
