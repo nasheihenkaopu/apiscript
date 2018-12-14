@@ -43,10 +43,14 @@ return array(
             //消息列表页
             3=> 'pages/index/index?pcode=message',
             //任务中心
-            4=> 'pages/index/index?pcode=TaskCenter'
+            4=> 'pages/index/index?pcode=TaskCenter',
+            //邀请好友页面
+            5=> 'pages/index/index?pcode=InviteFriends'
         ],
         'template'=>[
-            'sign' => env('WX_TEMPLATE_SIGN')
+            'sign' => env('WX_TEMPLATE_SIGN'),
+            'invitaion_get_gold' => env('WX_TEMPLATE_INVITATION_GET_GOLD'),
+            'invitaion_comment' => env('WX_TEMPLATE_INVITATION_COMMENT')
         ]
     ]
 );

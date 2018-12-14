@@ -35,11 +35,7 @@ class BaseScript{
             if($res->errcode == 0){
                 //删除form_id
                 $sql = "delete from vod_form_id where form_id = '{$message['form_id']}'";
-                if (mysqlExe($sql)) {
-                    logs('删除form_id成功->' .$message['form_id']);
-                } else {
-                    logs('删除form_id失败->' .$message['form_id']);
-                }
+                mysqlExe($sql);
                 //一个openid,24小时内只能发送一次
                 self::sendOpenid($message['touser']);
                 return true;
@@ -50,11 +46,8 @@ class BaseScript{
                 logs('发送失败,token出错');
                 logs($res);
                 for($i = 0;$i<2;$i++){
-                    sleep(1);
                     $res = json_decode(curl($send_message_api, 'POST', $message_json));
                     if($res->errcode == 0){
-                        logs('重试第'.$i.'次发送成功');
-                        logs($message);
                         return true;
                     }else{
                         logs('重试第'.$i.'次发送失败');
@@ -66,31 +59,19 @@ class BaseScript{
                 return false;
             }else if($res->errcode == 41028 || $res->errcode == 41029){
                 //{"errcode":41028,"errmsg":"invalid form id hint: [p.ewjA05223932]"}
-                logs('发送失败,form_id出错');
                 logs($res);
                 $sql = "delete from vod_form_id where form_id = '{$message['form_id']}'";
-                if(mysqlExe($sql)){
-                    logs('删除form_id->'.$message['form_id'].'成功');
-                }else{
-                    logs('删除form_id->'.$message['form_id'].'失败');
-                }
+                mysqlExe($sql);
                 return false;
             }else if($res->errcode == 40003){
                 //{"errcode":40003,"errmsg":"invalid openid hint: [gCCsqa09373950]"}
-                logs('发送失败,openid出错');
                 logs($res);
                 $sql = "delete from vod_form_id where openid = '{$message['touser']}'";
-                if (mysqlExe($sql)) {
-                    logs('删除openid->' . $message['touser'] . '成功');
-                } else {
-                    logs('删除openid->' . $message['touser'] . '失败');
-                }
+                mysqlExe($sql);
                 return false;
             }else{
-                logs('发送失败,未知原因');
                 logs($message);
                 logs($res);
-                logs('token->' . $app_token);
                 return false;
             }
         }else{

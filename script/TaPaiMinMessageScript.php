@@ -28,11 +28,7 @@ class TaPaiMinMessageScript extends BaseScript{
                         $this->message['template_id'] = conf('wx.template.sign');
                         $this->message['form_id'] = $user_mini[0]['form_id'];
                         // $this->message['emphasis_keyword'] = 'keyword1.DATA'
-                        if($this->sendMessage($this->message)){
-                            logs($user->user_id.'发送成功');
-                        }else{
-                            logs($user->user_id.'发送失败');
-                        }
+                        $this->sendMessage($this->message);
                     }else{
                         logs("{$user->user_id}木有form_id");
                     }
