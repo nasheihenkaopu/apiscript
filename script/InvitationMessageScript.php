@@ -52,7 +52,7 @@ class InvitationMessageScript extends BaseScript{
         }
 
         //查询用户昵称
-        $sql = "select name from vod_user where uid = {$this->data->array_uid} and uid != 0 limit 1";
+        $sql = "select name from vod_user where uid = {$this->data->uid} and uid != 0 limit 1";
         $user_name = mysqlExe($sql);
         if(!$user_name){
             logs('没查询到user_name');
