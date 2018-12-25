@@ -1,9 +1,9 @@
 <?php
 
 date_default_timezone_set('Asia/Shanghai');
-header("Content-Type: text/html;charset=utf-8");
 
-//PhpScript 目录
+
+//根目录
 defined('ROOT_PATH') or define('ROOT_PATH',__DIR__. DIRECTORY_SEPARATOR);
 
 //自动加载
@@ -58,7 +58,9 @@ if (!isset($argv[1])) {
     echo '请输入参数!';
     exit;
 } else {
-    $class = $argv[1];
+    $script = explode(',',$argv[1]);
+    $class = $script[0];
+    $param = empty($script[1]) ? null:$script[1];
 }
 
 //公共方法
@@ -68,11 +70,15 @@ $run_number = 1;
 while(true){
     //规定时间运行 ,格式 '起始时间-结束时间' 单位:时,每10分钟判断一次,不设置时间,则一直运行
     if (isset($argv[3])) {
-        $run_time = explode('-', $argv[3]);
-        $hours = date('H');
-        if (!($run_time[0] <= $hours && $run_time[1] > $hours)) {
-            sleep(60*10);
-            continue;
+        if(strpos($argv[3],'-')){
+            $run_time = explode('-', $argv[3]);
+            $hours = date('H');
+            if (!($run_time[0] <= $hours && $run_time[1] > $hours)) {
+                sleep(60*10);
+                continue;
+            }
+        }else{
+            $sleep_time = $argv[3];
         }
     }
 
@@ -85,9 +91,16 @@ while(true){
         }
     }
 
-    new $class();
-    usleep(200000);
+    if(empty($param)){
+        new $class();
+    }else{
+        new $class($param);
+    }
 
+    if(!empty($sleep_time)){
+        sleep($sleep_time);
+    }
+    
     $run_number++;
 }
     

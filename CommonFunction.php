@@ -74,7 +74,6 @@ function redis($fun,$par, $par2 = false,$par3 = false){
     }
     $redis->close();
     return $res;
-
 }
 
 /**
@@ -116,4 +115,11 @@ function conf($key)
         }
     }
     return $res;
+}
+
+/**
+ * 引入vendor文件
+ */
+function vendor($key){
+    require ROOT_PATH.'/vendor/'.$key;
 }
