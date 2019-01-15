@@ -3,9 +3,8 @@ class PutOfferScript{
     public function __construct($key)
     {
         $data = redis('rpop',$key);
-        if(empty($data)){
-            return false;
+        if(!empty($data)){
+            logs($data);
         }
-        log($data);
     }
 }

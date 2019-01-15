@@ -101,6 +101,7 @@ while(true){
         sleep($sleep_time);
     }
     
+    usleep(200000);
     $run_number++;
 }
     
